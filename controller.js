@@ -7,7 +7,7 @@ const http = require('http');
 const TESTMODE = true;
 
 
-let lastLoadingStart = 0;
+let lastLoadingStart = null;
 let PVData = {};
 let nrgDevice = {};
 let nrgMeasurements= {};
@@ -88,7 +88,11 @@ const readStatus = async function(){
 			}
 			console.log("schalte ein: " + (loadingCarInKw) + "kw, " + power2current(loadingCarInKw, config.threePhases) +  "A" );			
 			await switchLoading(true, power2current(balance-config.reservePower, config.threePhases)); //Wir laden mit dem Überschuss abzüglich der Reserve
-			lastLoadingStart = new Date().getTime();
+
+			if (!lastLoadingStart){
+				lastLoadingStart = new Date().getTime();
+			}
+			
 			startedFromHere = true;
 		}
 
@@ -99,13 +103,14 @@ const readStatus = async function(){
 					&& startedFromHere
 					&& (balance < config.feedInThreshold || PVData.storage < config.batteryThreshold )
 					&& config.loading === "auto" 
-					&& ((now - lastLoadingStart) / 60000) > config.atLeastloadingInMinutes
+					&& ((now - (lastLoadingStart ? lastLoadingStart : now)) / 60000) > config.atLeastloadingInMinutes
 				)	
 				|| (config.loading === "off"	&& loadingCarInKw > 0)			
 				 
 			){
 			//stop loading with NRGKick API
 			console.log("schalte aus");
+			lastLoadingStart = null;
 			await switchLoading(false, 0);
 			startedFromHere = false;
 			if (TESTMODE){
