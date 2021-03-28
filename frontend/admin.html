@@ -31,6 +31,7 @@
 								<tr><th>Überschuss (kw): </th><td id="td-balance"></td></tr>
 								<tr><th>Autoladung (kw): </th><td id="td-loadingcar"></td></tr>
 							</table>
+							<button type="button" class="btn btn-primary mt-3" onclick="loadStatus();">Aktuallisieren</button>
 						</div>
 					</div>	
 				</div>			
@@ -89,10 +90,10 @@
 									<div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="filterPhases">
 
 										<input type="radio" class="btn-check" autocomplete="off" name="threephases" id="r-threephasesyes" value="yes">
-										<label class="btn btn-primary" for="r-threephasesyes">Ja</label>
+										<label class="btn btn-outline-primary" for="r-threephasesyes">Ja</label>
 
 										<input type="radio" class="btn-check" autocomplete="off" name="threephases" id="r-threephasesno" value="no">
-										<label class="btn btn-primary" for="r-threephasesno">Nein</label>
+										<label class="btn btn-outline-primary" for="r-threephasesno">Nein</label>
 
 									</div>
 								</div>
@@ -101,17 +102,17 @@
 									<div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="filterState">
 
 										<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingon" value="on">
-										<label class="btn btn-primary" for="r-loadingon">An</label>
+										<label class="btn btn-outline-primary" for="r-loadingon">An</label>
 
 										<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingauto" value="auto"> 
-										<label class="btn btn-primary" for="r-loadingauto">Auto</label>
+										<label class="btn btn-outline-primary" for="r-loadingauto">Auto</label>
 
 										<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingoff" value="off"> 
-										<label class="btn btn-primary" for="r-loadingoff">Aus</label>
+										<label class="btn btn-outline-primary" for="r-loadingoff">Aus</label>
 
 									</div>
 								</div>					
-								<button type="submit" class="btn btn-success">Speichern</button>
+								<button type="submit" class="btn btn-primary">Speichern</button>
 							</form>	
 						</div>				
 					</div>
@@ -126,14 +127,13 @@
 					<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionAdmin">
 						<div class="accordion-body">
 							<form onsubmit="event.preventDefault();savePassword();">
-
 								<label for="tf-oldpassword" class="form-label">altes Passwort:</label>
 								<input type="password" id="tf-oldpassword" class="form-control">
 								<label for="tf-password" class="form-label">neues Passwort:</label>
 								<input type="password" id="tf-password" class="form-control">
 								<label for="tf-password-confirm" class="form-label">Passwort wiederholen:</label>
 								<input type="password" id="tf-password-confirm" class="form-control">
-								<button type="submit" class="btn btn-success">Passwort speichern</button>
+								<button type="submit" class="btn btn-primary">Passwort speichern</button>
 							</form>	
 						</div>
 					</div>

@@ -53,10 +53,11 @@ app.get('/admin', function (req, res) {
 	res.sendFile( __dirname + "/frontend/" + "admin.html" );
 });
 
-app.get('/get-status', function (req, res) {
+app.get('/get-status', async function (req, res) {
 	if (!req.session.auth){
 		return res.status(403).send("no");
 	}
+	await controller.callRefresh();
 	return res.json(controller.getPVData());
 });
 
