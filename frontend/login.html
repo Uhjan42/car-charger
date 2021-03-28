@@ -1,16 +1,19 @@
-<html>
+<!doctype html>
+<html lang="de">
 	<head>
+		<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Login Car Carger</title>
 		<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
 		<script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 		<script src="login.js"></script>
 	</head>
 	<body>
-		<div class="container-sm">
+		<div class="container-fluid">
 			<h2>Login Car Charger <img src="./eco-car512.png" width="50"/></h2>
 			<form onsubmit="event.preventDefault();submitLogin();">
-				<div class="form-group">
-					<label for="tf-password">Password</label>
+				<div class="mb-3">
+					<label for="tf-password" class="form-label">Password</label>
 					<input type="password" class="form-control" name="password" id="tf-password">				
 				</div>
 				<button type="submit" class="btn btn-primary">Anmelden</button>

@@ -1,5 +1,8 @@
-<html>
+<!doctype html>
+<html lang="de">
 	<head>
+		<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Car Carger</title>
 		<link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
 		<script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -9,82 +12,105 @@
 		<div class="container-sm">
 			<h2>Car Charger Admin Page</h2>
 
+			<h3>Infos PV</h3>
+			<table>
+				<tr><th>Verbrauch (kw): </th><td id="td-load"></td></tr>
+				<tr><th>Netzbezug (kw): </th><td id="td-purchase"></td></tr>
+				<tr><th>Einspeisung (kw): </th><td id="td-feedin"></td></tr>
+				<tr><th>Produktion (kw): </th><td id="td-pv"></td></tr>
+				<tr><th>Batterieladung (kw): </th><td id="td-loadstorage"></td></tr>
+				<tr><th>Batteriestand (%): </th><td id="td-storage"></td></tr>
+				<tr><th>Überschuss (kw): </th><td id="td-balance"></td></tr>
+				<tr><th>Autoladung (kw): </th><td id="td-loadingcar"></td></tr>
+			</table>
 
-			<div class="card" style="width: 35rem;">
-				<div class="card-body">
-					<h5 class="card-title">Infos PV</h5>
-					<table>
-						<tr><th>Verbrauch (kw): </th><td id="td-load"></td></tr>
-						<tr><th>Netzbezug (kw): </th><td id="td-purchase"></td></tr>
-						<tr><th>Einspeisung (kw): </th><td id="td-feedin"></td></tr>
-						<tr><th>Produktion (kw): </th><td id="td-pv"></td></tr>
-						<tr><th>Batterieladung (kw): </th><td id="td-loadstorage"></td></tr>
-						<tr><th>Batteriestand (%): </th><td id="td-storage"></td></tr>
-						<tr><th>Überschuss (kw): </th><td id="td-balance"></td></tr>
-						<tr><th>Autoladung (kw): </th><td id="td-loadingcar"></td></tr>
-					</table>
+			<hr>
+
+			<h3>Einstellungen</h3>
+			<form onsubmit="event.preventDefault();saveConfig();">
+				<div class="mb-3">
+					<label for="td-apikey" class="form-label">API Key:</label>
+					<input type="text" id="td-apikey" size=32 class="form-control">
 				</div>
-			</div>
-			
-
-			<div class="card" style="width: 35rem;">
-				<div class="card-body">
-					<h5 class="card-title">Einstellungen</h5>
-					<form onsubmit="event.preventDefault();saveConfig();">
-						<table>
-							<tr><th>API Key: </th><td><input type="text" id="td-apikey" size=32></td></tr>
-							<tr><th>Site ID: </th><td><input type="text"id="td-siteid"></td></tr>
-							<tr><th>NRG Kick IP Adresse: </th><td><input type="text" id="td-nrg-ip"></td></tr>
-							<tr><th>NRG Kick BLE Passwort: </th><td><input type="password" id="td-nrg-password"></td></tr>
-							<tr><th>Überschuss für Ladung (kW): </th><td><input type="number" step=0.1 id="td-feedinthreshold"></td></tr>
-							<tr><th>Reserve bei Ladung (kW): </th><td><input type="number" step=0.1 id="td-reservepower"></td></tr>
-							<tr><th>Batteriemindeststand (%): </th><td><input type="number" id="td-batterythreshold"></td></tr>
-							<tr><th>Mindestladedauer (Min.): </th><td><input type="number" id="td-leastloading"></td></tr>
-							<tr><th>Mindestladestrom (A): </th><td><input type="number" id="td-mincurrent"></td></tr>
-							<tr><th>Maximalladestrom (A): </th><td><input type="number" id="td-maxcurrent"></td></tr>
-							<tr><th>Dreiphasig: </th><td>
-								<div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="filterPhases">
-
-										<input type="radio" class="btn-check" autocomplete="off" name="threephases" id="r-threephasesyes" value="yes">
-										<label class="btn btn-primary" for="r-threephasesyes">Ja</label>
-
-										<input type="radio" class="btn-check" autocomplete="off" name="threephases" id="r-threephasesno" value="no">
-										<label class="btn btn-primary" for="r-threephasesno">Nein</label>
-
-								</div>
-							</td></tr>
-							<tr><th>Ladestatus: </th><td>
-								<div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="filterState">
-
-									<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingon" value="on">
-									<label class="btn btn-primary" for="r-loadingon">An</label>
-
-									<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingauto" value="auto"> 
-									<label class="btn btn-primary" for="r-loadingauto">Auto</label>
-
-									<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingoff" value="off"> 
-									<label class="btn btn-primary" for="r-loadingoff">Aus</label>
-
-								</div>
-							</td></tr>
-						</table>
-						<button type="submit" class="btn btn-success">Speichern</button>
-					</form>	
+				<div class="mb-3">
+					<label for="td-siteid" class="form-label">Site ID:</label>
+					<input type="text" id="td-siteid" class="form-control">
 				</div>
-			</div>	
-
-			<div class="card" style="width: 35rem;">
-				<div class="card-body">
-					<h5 class="card-title">Passwort ändern</h5>
-					<form onsubmit="event.preventDefault();savePassword();">
-						<label>altes Passwort: <input type="password" id="tf-oldpassword"></label><br>
-						<label>neues Passwort: <input type="password" id="tf-password"></label><br>
-						<label>Passwort wiederholen: <input type="password" id="tf-password-confirm"></label><br>
-						<button type="submit" class="btn btn-success">Passwort speichern</button>
-					</form>
+				<div class="mb-3">
+					<label for="td-nrg-ip" class="form-label">NRG Kick IP Adresse:</label>
+					<input type="text" id="td-nrg-ip" class="form-control">
 				</div>
-			</div>		
+				<div class="mb-3">
+					<label for="td-nrg-password" class="form-label">NRG Kick BLE Passwort:</label>
+					<input type="password" id="td-nrg-password" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label for="td-feedinthreshold" class="form-label">Überschuss für Ladung (kW):</label>
+					<input type="number" step=0.1 id="td-feedinthreshold" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label for="td-reservepower" class="form-label">Reserve bei Ladung (kW):</label>
+					<input type="number" step=0.1 id="td-reservepower" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label for="td-batterythreshold" class="form-label">Batteriemindeststand (%):</label>
+					<input type="number" id="td-batterythreshold" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label for="td-leastloading" class="form-label">Mindestladedauer (Min.):</label>
+					<input type="number" id="td-leastloading" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label for="td-mincurrent" class="form-label">Mindestladestrom (A):</label>
+					<input type="number" id="td-mincurrent" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label for="td-maxcurrent" class="form-label">Maximalladestrom (A):</label>
+					<input type="number" id="td-maxcurrent" class="form-control">
+				</div>
+				<div class="mb-3">
+					Dreiphasig: 
+					<div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="filterPhases">
 
+						<input type="radio" class="btn-check" autocomplete="off" name="threephases" id="r-threephasesyes" value="yes">
+						<label class="btn btn-primary" for="r-threephasesyes">Ja</label>
+
+						<input type="radio" class="btn-check" autocomplete="off" name="threephases" id="r-threephasesno" value="no">
+						<label class="btn btn-primary" for="r-threephasesno">Nein</label>
+
+					</div>
+				</div>
+				<div class="mb-3">
+					Ladestatus:
+					<div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="filterState">
+
+						<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingon" value="on">
+						<label class="btn btn-primary" for="r-loadingon">An</label>
+
+						<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingauto" value="auto"> 
+						<label class="btn btn-primary" for="r-loadingauto">Auto</label>
+
+						<input type="radio" class="btn-check" autocomplete="off" name="loading" id="r-loadingoff" value="off"> 
+						<label class="btn btn-primary" for="r-loadingoff">Aus</label>
+
+					</div>
+				</div>					
+				<button type="submit" class="btn btn-success">Speichern</button>
+			</form>	
+
+			<hr>
+			<h3>Passwort ändern</h3>
+			<form onsubmit="event.preventDefault();savePassword();">
+
+				<label for="tf-oldpassword" class="form-label">altes Passwort:</label>
+				<input type="password" id="tf-oldpassword" class="form-control">
+				<label for="tf-password" class="form-label">neues Passwort:</label>
+				<input type="password" id="tf-password" class="form-control">
+				<label for="tf-password-confirm" class="form-label">Passwort wiederholen:</label>
+				<input type="password" id="tf-password-confirm" class="form-control">
+				<button type="submit" class="btn btn-success">Passwort speichern</button>
+			</form>
+	
 			<form action="/login">
 				<button type="submit" class="btn btn-danger">Abmelden</button>
 			</form>	
