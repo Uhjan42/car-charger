@@ -100,7 +100,7 @@ const readStatus = async function(){
 
 		if ( 
 				( loadingCarInKw > 0 
-					&& startedFromHere
+					&& (startedFromHere || config.alwaysOffAuto)
 					&& (balance < config.feedInThreshold || PVData.storage < config.batteryThreshold )
 					&& config.loading === "auto" 
 					&& ((now - (lastLoadingStart ? lastLoadingStart : now)) / 60000) > config.atLeastloadingInMinutes
@@ -160,7 +160,6 @@ const switchLoading = async function(loading, current){
 		}
 
 		let saveCurrent = 0;
-		saveCurrent = (saveCurrent < config.maxCurrent ? config.maxCurrent : current)
 
 		if (current > config.maxCurrent){
 			saveCurrent = config.maxCurrent;
@@ -184,7 +183,6 @@ const switchLoading = async function(loading, current){
 			}
 		};
 
-		//const config = await getConfig();
 		await postRequest(config.nrg.ip, `/api/settings/${nrgDevice.MacAddress}`, settings);
 	}
 	return;

@@ -34,6 +34,7 @@ const loadStatus = async function(){
 	document.querySelector("#td-maxcurrent").value = config.maxCurrent;
 	document.querySelector(`#r-loading${config.loading}`).click();
 	document.querySelector(`#r-threephases${(config.threePhases?'yes':'no')}`).click();
+	document.querySelector(`#r-alwaysoffauto${(config.alwaysOffAuto?'yes':'no')}`).click();
 
 };
 
@@ -66,7 +67,8 @@ const saveConfig = async function(){
 	config.minCurrent = parseInt(document.querySelector("#td-mincurrent").value);
 	config.maxCurrent = parseInt(document.querySelector("#td-maxcurrent").value);
 	config.loading = document.querySelector('input[name=loading]:checked').value;
-	config.threePhases = (document.querySelector('input[name=loading]:checked').value === "yes" ? true: false);
+	config.threePhases = (document.querySelector('input[name=threephases]:checked').value === "yes" ? true: false);
+	config.alwaysOffAuto = (document.querySelector('input[name=alwaysoff]:checked').value === "yes" ? true: false);
 
 	let response = await fetch('/set-config', {
 		method: 'POST',
