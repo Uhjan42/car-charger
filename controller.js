@@ -13,6 +13,7 @@ let nrgDevice = {};
 let nrgMeasurements= {};
 let loadingCarInKw = 0 ;
 let startedFromHere = false;
+let firstOffChance = false;
 
 const getConfig = async function(){
 	const data = await readFile(__dirname + '/config.json', 'utf8');
@@ -94,6 +95,7 @@ const readStatus = async function(){
 			}
 			
 			startedFromHere = true;
+			firstOffChance = false;
 		}
 
 		let now = new Date().getTime();
@@ -101,6 +103,7 @@ const readStatus = async function(){
 		if ( 
 				( loadingCarInKw > 0 
 					&& (startedFromHere || config.alwaysOffAuto)
+					&& firstOffChance
 					&& (balance < config.feedInThreshold || PVData.storage < config.batteryThreshold )
 					&& config.loading === "auto" 
 					&& ((now - (lastLoadingStart ? lastLoadingStart : now)) / 60000) > config.atLeastloadingInMinutes
@@ -113,9 +116,14 @@ const readStatus = async function(){
 			lastLoadingStart = null;
 			await switchLoading(false, 0);
 			startedFromHere = false;
+			firstOffChance = false;
 			if (TESTMODE){
 				loadingCarInKw = 0;
 			}
+		}
+
+		if (balance < config.feedInThreshold && loadingCarInKw > 0){
+			firstOffChance = true;
 		}
 
 		PVData.loadingCarInKw = loadingCarInKw;
