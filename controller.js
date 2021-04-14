@@ -120,9 +120,7 @@ const readStatus = async function(){
 			if (TESTMODE){
 				loadingCarInKw = 0;
 			}
-		}
-
-		if (balance < config.feedInThreshold && loadingCarInKw > 0){
+		}else	if (balance < config.feedInThreshold && loadingCarInKw > 0){
 			firstOffChance = true;
 		}
 
@@ -227,7 +225,6 @@ const getRequest = function (url) {
 			reject(e);
 		});
 
-		req.setTimeout(5000, (s)=>{s.destroy();});
 	});
 }
 
@@ -239,7 +236,7 @@ const postRequest = function (apiHost, apiPath, dataObj) {
 			host: apiHost, //No need to include 'http://' or 'www.'
 			port: 80,
 			path: apiPath,
-			method: 'PUT',
+			method: 'POST',
 			headers: {
 					'Content-Type': 'application/json', //Specifying to the server that we are sending JSON 
 			}
