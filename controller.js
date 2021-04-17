@@ -239,17 +239,13 @@ const postRequest = function (apiHost, apiPath, dataObj) {
 			method: 'POST',
 			headers: {
 					'Content-Type': 'application/json', //Specifying to the server that we are sending JSON 
+					'Content-Length': dataStr.length
 			}
 	};
 
 	return new Promise((resolve, reject) => {
-		let responseString = ""
 
 		const request = http.request(urlparams, (res) => {
-
-			res.on('data', (d) => {
-				responseString += d;
-			});
 			
 			res.on('end', async () => {
 				resolve("OK");
