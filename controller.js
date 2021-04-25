@@ -68,7 +68,7 @@ const readStatus = async function(){
 			balance -= PVData.grid;
 		}
 
-		if (!TESTMODE){
+		if (TESTMODE){
 			balance += loadingCarInKw;
 		}
 		balance += (PVData.loadStorage); 
@@ -236,7 +236,7 @@ const postRequest = function (apiHost, apiPath, dataObj) {
 			host: apiHost, //No need to include 'http://' or 'www.'
 			port: 80,
 			path: apiPath,
-			method: 'POST',
+			method: 'PUT',
 			headers: {
 					'Content-Type': 'application/json', //Specifying to the server that we are sending JSON 
 					'Content-Length': dataStr.length
