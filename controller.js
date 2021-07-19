@@ -32,7 +32,7 @@ const readStatus = async function(){
 
 	// We only check between 9:00 and 21:00 (every 3 minutes)
 	let d = new Date();
-	if (d.getHours() < 9 || d.getHours() > 20) return;
+	//if (d.getHours() < 9 || d.getHours() > 20) return;
 
 	try{
 
@@ -128,7 +128,7 @@ const readStatus = async function(){
 		console.log(JSON.stringify(PVData));	
 
 	}catch(err){
-
+		console.log("Error here");
 		console.error(err);
 
 	}
@@ -157,11 +157,15 @@ const getNrgDeviceMeasurements = async function(){
 };
 
 const switchLoading = async function(loading, current){
+	console.log("switchLoading");
 
-	if (!TESTMODE){
+	//if (!TESTMODE){
+	if (true){
 		const config = await getConfig();
 		if (typeof nrgDevice.MacAddress === 'undefined') {
+			console.log("before getNrgDevice");
 			nrgDevice = await getNrgDevice();
+			console.log("after getNrgDevice");
 		}
 
 		let saveCurrent = 0;
@@ -188,7 +192,9 @@ const switchLoading = async function(loading, current){
 			}
 		};
 
+		console.log("before post");
 		await postRequest(config.nrg.ip, `/api/settings/${nrgDevice.MacAddress}`, settings);
+		console.log("after post");
 	}
 	return;
 };
@@ -213,7 +219,7 @@ const getRequest = function (url) {
 			});
 
 			res.on('error', async (e) => {		
-				reject(e);
+				//reject(e);
 			});
 
 			res.on('timeout', async () => {		
@@ -221,7 +227,7 @@ const getRequest = function (url) {
 			});
 	
 		}).on('error', (e) => {
-			reject(e);
+			//reject(e);
 		});
 
 	});
@@ -247,11 +253,12 @@ const postRequest = function (apiHost, apiPath, dataObj) {
 		const request = http.request(urlparams, (res) => {
 			
 			res.on('end', async () => {
+				console.log("post end");
 				resolve("OK");
 			});
 	
 		}).on('error', (e) => {
-			reject(e);
+			//reject(e);
 		});
 
 		
