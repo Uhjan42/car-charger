@@ -13,7 +13,7 @@ let nrgDevice = {};
 let nrgMeasurements= {};
 let loadingCarInKw = 0 ;
 let startedFromHere = false;
-let firstOffChance = false;
+let firstOffChance = true;
 
 const getConfig = async function(){
 	const data = await readFile(__dirname + '/config.json', 'utf8');
@@ -68,7 +68,7 @@ const readStatus = async function(){
 			balance -= PVData.grid;
 		}
 
-		if (TESTMODE){
+		if (!TESTMODE){
 			balance += loadingCarInKw;
 		}
 		balance += (PVData.loadStorage); 
@@ -87,7 +87,7 @@ const readStatus = async function(){
 			}else{
 				loadingCarInKw = (balance - config.reservePower);
 			}
-			console.log("schalte ein: " + (loadingCarInKw) + "kw, " + power2current(loadingCarInKw, config.threePhases) +  "A" );			
+			console.log("schalte ein: " + (loadingCarInKw) + "kw, " + power2current(balance-config.reservePower, config.threePhases) +  "A" );			
 			await switchLoading(true, power2current(balance-config.reservePower, config.threePhases)); //Wir laden mit dem Überschuss abzüglich der Reserve
 
 			if (!lastLoadingStart){
@@ -116,7 +116,6 @@ const readStatus = async function(){
 			lastLoadingStart = null;
 			await switchLoading(false, 0);
 			startedFromHere = false;
-			firstOffChance = false;
 			if (TESTMODE){
 				loadingCarInKw = 0;
 			}
