@@ -11,8 +11,6 @@ let lastLoadingStart = null;
 let PVData = {};
 let nrgDevice = {};
 let nrgMeasurements= {};
-
-
 let loadingCarInKw = 0 ;
 let startedFromHere = false;
 let firstOffChance = true;
@@ -34,7 +32,7 @@ const readStatus = async function(){
 
 	// We only check between 9:00 and 21:00 (every 3 minutes)
 	let d = new Date();
-	//if (d.getHours() < 9 || d.getHours() > 20) return;
+	if (d.getHours() < 9 || d.getHours() > 20) return;
 
 	try{
 
@@ -110,7 +108,7 @@ const readStatus = async function(){
 					&& config.loading === "auto" 
 					&& ((now - (lastLoadingStart ? lastLoadingStart : now)) / 60000) > config.atLeastloadingInMinutes
 				)	
-				|| (config.loading === "off"	&& loadingCarInKw > 0)			
+				|| (config.loading === "off" && loadingCarInKw > 0)			
 				 
 			){
 			//stop loading with NRGKick API
@@ -121,7 +119,7 @@ const readStatus = async function(){
 			if (TESTMODE){
 				loadingCarInKw = 0;
 			}
-		}else	if (balance < config.feedInThreshold && loadingCarInKw > 0){
+		}else if (balance < config.feedInThreshold && loadingCarInKw > 0){
 			firstOffChance = true;
 		}
 
@@ -131,7 +129,7 @@ const readStatus = async function(){
 
 	}catch(err){
 
-		console.error(err);
+		console.error(err.message);
 
 	}
 	
@@ -212,12 +210,19 @@ const getRequest = function (url) {
 				responseString += d;
 			});
 			
-			res.on('end', async () => {		
-				let responseJson = JSON.parse(responseString);
-				resolve(responseJson);
+			res.on('end', async () => {
+				try{
+					let responseJson = JSON.parse(responseString);
+					resolve(responseJson);
+				}
+				catch(e){
+					console.error(e.message + " " + responseJson);
+				}
+				
 			});
 
 			res.on('error', async (e) => {		
+				console.error(e.message);
 				reject(e);
 			});
 
@@ -251,15 +256,21 @@ const postRequest = function (apiHost, apiPath, dataObj) {
 	return new Promise((resolve, reject) => {
 
 		const request = http.request(urlparams, (res) => {
-			
-		}).on('error', (e) => {
-			reject(e);
+			res.on('error', async (err) => {				
+				console.error(err.message);
+			});
+
+			res.on('timeout', async () => {
+				console.error('timeout');
+			});
+		}).on('error', (err) => {
+			reject(err);
 		});
 
 
 	//request.setTimeout(5000, (s)=>{s.destroy();});		
-    	request.write(dataStr); //Send off the request.
-    	request.end(); //End the request.
+    request.write(dataStr); //Send off the request.
+    request.end(); //End the request.
 		resolve("OK");
 	});
 }
