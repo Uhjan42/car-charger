@@ -11,6 +11,8 @@ let lastLoadingStart = null;
 let PVData = {};
 let nrgDevice = {};
 let nrgMeasurements= {};
+
+
 let loadingCarInKw = 0 ;
 let startedFromHere = false;
 let firstOffChance = true;
@@ -49,14 +51,14 @@ const readStatus = async function(){
 		PVData.grid = responseJson.siteCurrentPowerFlow.GRID.currentPower;
 		PVData.load = responseJson.siteCurrentPowerFlow.LOAD.currentPower;
 		PVData.pv = responseJson.siteCurrentPowerFlow.PV.currentPower;
-		PVData.loadStorage = (PVData.storageIn ? responseJson.siteCurrentPowerFlow.STORAGE.currentPower : 0);
+		PVData.loadStorage = (PVData.storageIn ? responseJson.siteCurrentPowerFlow.STORAGE.currentPower : 0 - responseJson.siteCurrentPowerFlow.STORAGE.currentPower);
 		PVData.storage = responseJson.siteCurrentPowerFlow.STORAGE.chargeLevel;
 
-		
 		if (!TESTMODE){
 			nrgMeasurements = await getNrgDeviceMeasurements();
 			console.log(JSON.stringify(nrgMeasurements));
 			loadingCarInKw = nrgMeasurements.ChargingPower;
+			//loadingCarInKw = 0;
 		}
 		
 
@@ -87,7 +89,7 @@ const readStatus = async function(){
 			}else{
 				loadingCarInKw = (balance - config.reservePower);
 			}
-			console.log("schalte ein: " + (loadingCarInKw) + "kw, " + power2current(balance-config.reservePower, config.threePhases) +  "A" );			
+			console.log("schalte ein: " + (loadingCarInKw) + "kw, " + power2current(balance-config.reservePower, config.threePhases) +  "A" );		
 			await switchLoading(true, power2current(balance-config.reservePower, config.threePhases)); //Wir laden mit dem Überschuss abzüglich der Reserve
 
 			if (!lastLoadingStart){
@@ -128,7 +130,7 @@ const readStatus = async function(){
 		console.log(JSON.stringify(PVData));	
 
 	}catch(err){
-		console.log("Error here");
+
 		console.error(err);
 
 	}
@@ -157,19 +159,18 @@ const getNrgDeviceMeasurements = async function(){
 };
 
 const switchLoading = async function(loading, current){
-	console.log("switchLoading");
 
-	//if (!TESTMODE){
-	if (true){
+	if (!TESTMODE){
 		const config = await getConfig();
 		if (typeof nrgDevice.MacAddress === 'undefined') {
-			console.log("before getNrgDevice");
 			nrgDevice = await getNrgDevice();
-			console.log("after getNrgDevice");
 		}
 
 		let saveCurrent = 0;
 
+		if (!loading){
+			saveCurrent = 0;
+		}
 		if (current > config.maxCurrent){
 			saveCurrent = config.maxCurrent;
 		}else if(current < config.minCurrent){
@@ -192,9 +193,7 @@ const switchLoading = async function(loading, current){
 			}
 		};
 
-		console.log("before post");
 		await postRequest(config.nrg.ip, `/api/settings/${nrgDevice.MacAddress}`, settings);
-		console.log("after post");
 	}
 	return;
 };
@@ -219,7 +218,7 @@ const getRequest = function (url) {
 			});
 
 			res.on('error', async (e) => {		
-				//reject(e);
+				reject(e);
 			});
 
 			res.on('timeout', async () => {		
@@ -227,8 +226,9 @@ const getRequest = function (url) {
 			});
 	
 		}).on('error', (e) => {
-			//reject(e);
+			reject(e);
 		});
+		//req.setTimeout(5000, (s)=>{s.destroy();});
 
 	});
 }
@@ -252,18 +252,15 @@ const postRequest = function (apiHost, apiPath, dataObj) {
 
 		const request = http.request(urlparams, (res) => {
 			
-			res.on('end', async () => {
-				console.log("post end");
-				resolve("OK");
-			});
-	
 		}).on('error', (e) => {
-			//reject(e);
+			reject(e);
 		});
 
-		
-    request.write(dataStr); //Send off the request.
-    request.end(); //End the request.
+
+	//request.setTimeout(5000, (s)=>{s.destroy();});		
+    	request.write(dataStr); //Send off the request.
+    	request.end(); //End the request.
+		resolve("OK");
 	});
 }
 
@@ -287,4 +284,3 @@ exports.callRefresh = async function() {
   await readStatus();
 	return;
 }
-
